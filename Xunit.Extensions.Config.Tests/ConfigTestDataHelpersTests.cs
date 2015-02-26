@@ -38,6 +38,8 @@ namespace Xunit.Extensions
         [Theory]
         [InlineData("A", typeof(string), "A")]
         [InlineData("123", typeof(int), 123)]
+        [InlineData("456", typeof(int?), 456)]
+        [InlineData("", typeof(int?), null)]
         [InlineData("true", typeof(bool), true)]
         public void ConvertTypes(string value, Type type, object result)
         {

@@ -12,6 +12,8 @@ namespace Xunit.Extensions.Helpers
     {
         public const string SectionName = "testData";
 
+        private static readonly Type NullableType = typeof (Nullable<>);
+
         private static readonly ConcurrentDictionary<string, bool> NameHasDataMap = new ConcurrentDictionary<string, bool>();
 
         public static IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
@@ -76,6 +78,17 @@ namespace Xunit.Extensions.Helpers
             {
                 var type = types[i];
                 var value = values[i];
+
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == NullableType)
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        results[i] = null;
+                        continue;
+                    }
+
+                    type = type.GetGenericArguments().Single();
+                }
 
                 results[i] = Convert.ChangeType(value, type);
             }
