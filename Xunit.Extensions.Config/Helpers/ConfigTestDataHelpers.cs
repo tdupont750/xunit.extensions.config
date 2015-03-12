@@ -90,7 +90,9 @@ namespace Xunit.Extensions.Helpers
                     type = type.GetGenericArguments().Single();
                 }
 
-                results[i] = Convert.ChangeType(value, type);
+                results[i] = type.IsEnum
+                    ? Enum.Parse(type, value)
+                    : Convert.ChangeType(value, type);
             }
 
             return results;

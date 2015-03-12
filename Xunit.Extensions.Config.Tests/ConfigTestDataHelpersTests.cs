@@ -14,7 +14,8 @@ namespace Xunit.Extensions
             {
                 typeof (string),
                 typeof (int),
-                typeof (bool)
+                typeof (bool),
+                typeof (TestEnum)
             };
 
             var data = ConfigTestDataHelpers
@@ -22,8 +23,8 @@ namespace Xunit.Extensions
                 .ToList();
 
             Assert.Equal(2, data.Count);
-            Assert.Equal(data[0], new object[] { "Hello", 123, true });
-            Assert.Equal(data[1], new object[] { "World", 456, false });
+            Assert.Equal(data[0], new object[] { "Hello", 123, true, TestEnum.World });
+            Assert.Equal(data[1], new object[] { "Goodnight", 456, false, TestEnum.Moon });
         }
 
         [Fact]
@@ -41,6 +42,7 @@ namespace Xunit.Extensions
         [InlineData("456", typeof(int?), 456)]
         [InlineData("", typeof(int?), null)]
         [InlineData("true", typeof(bool), true)]
+        [InlineData("Goodnight", typeof(TestEnum), TestEnum.Goodnight)]
         public void ConvertTypes(string value, Type type, object result)
         {
             var values = new[] { value };
