@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Extensions.Helpers;
+using Xunit.Sdk;
 
 namespace Xunit.Extensions
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class ConfigDataAttribute : DataAttribute
     {
-        public override IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
-            return ConfigTestDataHelpers.GetData(methodUnderTest, parameterTypes);
+            return ConfigTestDataHelpers.GetData(testMethod);
         }
     }
 }

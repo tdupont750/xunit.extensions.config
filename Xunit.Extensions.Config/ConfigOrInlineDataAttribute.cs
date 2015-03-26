@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Extensions.Helpers;
+using Xunit.Sdk;
 
 namespace Xunit.Extensions
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class ConfigOrInlineDataAttribute : InlineDataAttribute
+    public class ConfigOrInlineDataAttribute : DataAttribute
     {
+        private readonly object[] _data;
+
         public ConfigOrInlineDataAttribute(params object[] dataValues)
-            : base(dataValues)
         {
+            _data = dataValues;
         }
 
-        public override IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
-            return ConfigTestDataHelpers.GetData(methodUnderTest, parameterTypes) ?? base.GetData(methodUnderTest, parameterTypes);
+            return ConfigTestDataHelpers.GetData(testMethod) ?? new[] { _data };
         }
     }
 }

@@ -16,11 +16,16 @@ namespace Xunit.Extensions.Helpers
 
         private static readonly ConcurrentDictionary<string, bool> NameHasDataMap = new ConcurrentDictionary<string, bool>();
 
-        public static IEnumerable<object[]> GetData(MethodInfo methodUnderTest, Type[] parameterTypes)
+        public static IEnumerable<object[]> GetData(MethodInfo methodUnderTest)
         {
             var name = GetName(methodUnderTest);
 
             IEnumerable<object[]> data = null;
+
+            var parameterTypes = methodUnderTest
+                .GetParameters()
+                .Select(p => p.ParameterType)
+                .ToList();
 
             var hasData = NameHasDataMap.GetOrAdd(name, k =>
             {
@@ -33,7 +38,7 @@ namespace Xunit.Extensions.Helpers
 
             return hasData
                 ? Enumerable.Empty<object[]>()
-                :null;
+                : null;
         }
 
         public static IList<object[]> GetDataFromConfig(string name, IList<Type> parameterTypes)
@@ -47,12 +52,14 @@ namespace Xunit.Extensions.Helpers
             if (test == null)
                 return null;
 
-            return test.Data
+            var x =  test.Data
                 .Cast<TestDataElement>()
                 .OrderBy(d => d.Index)
                 .Select(d => d.GetParams())
                 .Select(p => ConvertTypes(p, parameterTypes))
                 .ToList();
+
+            return x;
         }
 
         public static string GetName(MethodInfo methodUnderTest)

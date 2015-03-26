@@ -27,20 +27,24 @@ namespace Xunit.Extensions
         {
             GetDataWithConfigList.Add(num);
 
-            Assert.Equal(GetDataWithConfigList.Count, num);
+            Assert.Equal(GetDataWithConfigList.Count, num + 1);
         }
 
         [Fact]
         public void GetDataWithConfigTwice()
         {
-            var attribute = new ConfigOrInlineDataAttribute();
-            var currentMethod = (MethodInfo) MethodBase.GetCurrentMethod();
-            var types = new[] {typeof (bool)};
+            GetDataWithConfigTwice(false);
+        }
 
-            var data1 = attribute.GetData(currentMethod, types);
+        private void GetDataWithConfigTwice(bool arg1)
+        {
+            var attribute = new ConfigOrInlineDataAttribute();
+            var currentMethod = (MethodInfo)MethodBase.GetCurrentMethod();
+
+            var data1 = attribute.GetData(currentMethod);
             Assert.Equal(2, data1.Count());
 
-            var data2 = attribute.GetData(currentMethod, types);
+            var data2 = attribute.GetData(currentMethod);
             Assert.Equal(0, data2.Count());
         }
     }
