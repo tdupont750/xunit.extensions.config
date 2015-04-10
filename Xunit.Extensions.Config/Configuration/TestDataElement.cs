@@ -14,6 +14,15 @@ namespace Xunit.Extensions.Configuration
             set { this[IndexName] = value; }
         }
 
+        private const string NameName = "name";
+
+        [ConfigurationProperty(NameName, IsKey = false, IsRequired = false)]
+        public string Name
+        {
+            get { return (string)this[NameName]; }
+            set { this[NameName] = value; }
+        }
+
         private const string P0Name = "p0";
 
         [ConfigurationProperty(P0Name, IsKey = false, IsRequired = false)]

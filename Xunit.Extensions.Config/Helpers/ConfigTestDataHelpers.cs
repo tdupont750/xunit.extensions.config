@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using Xunit.Extensions.Configuration;
+using Xunit.Extensions.Models;
 
 namespace Xunit.Extensions.Helpers
 {
@@ -16,32 +17,45 @@ namespace Xunit.Extensions.Helpers
 
         private static readonly ConcurrentDictionary<string, bool> NameHasDataMap = new ConcurrentDictionary<string, bool>();
 
-        public static IEnumerable<object[]> GetData(MethodInfo methodUnderTest)
+        public static IEnumerable<object[]> GetData(MethodInfo methodUnderTest, bool useCache = true)
+        {
+            var models = GetDataModels(methodUnderTest, useCache);
+
+            return models == null
+                ? null
+                : models.Select(m => m.Data);
+        }
+
+        public static IEnumerable<DataModel> GetDataModels(MethodInfo methodUnderTest, bool useCache = true)
         {
             var name = GetName(methodUnderTest);
 
-            IEnumerable<object[]> data = null;
+            IEnumerable<DataModel> data = null;
 
-            var parameterTypes = methodUnderTest
-                .GetParameters()
-                .Select(p => p.ParameterType)
-                .ToList();
-
-            var hasData = NameHasDataMap.GetOrAdd(name, k =>
+            var loadData = new Func<string, bool>(k =>
             {
-                data = GetDataFromConfig(name, parameterTypes);
+                var parameterTypes = methodUnderTest
+                    .GetParameters()
+                    .Select(p => p.ParameterType)
+                    .ToList();
+
+                data = GetDataModels(name, parameterTypes);
                 return data != null;
             });
+
+            var hasData = useCache 
+                ? NameHasDataMap.GetOrAdd(name, loadData) 
+                : loadData(name);
 
             if (data != null)
                 return data;
 
             return hasData
-                ? Enumerable.Empty<object[]>()
+                ? Enumerable.Empty<DataModel>()
                 : null;
         }
 
-        public static IList<object[]> GetDataFromConfig(string name, IList<Type> parameterTypes)
+        public static IList<DataModel> GetDataModels(string name, IList<Type> parameterTypes)
         {
             var section = (TestDataSection)ConfigurationManager.GetSection(SectionName);
 
@@ -52,14 +66,22 @@ namespace Xunit.Extensions.Helpers
             if (test == null)
                 return null;
 
-            var x =  test.Data
+            return test.Data
                 .Cast<TestDataElement>()
-                .OrderBy(d => d.Index)
-                .Select(d => d.GetParams())
-                .Select(p => ConvertTypes(p, parameterTypes))
-                .ToList();
+                .Select(d =>
+                {
+                    var strings = d.GetParams();
+                    var converted = ConvertTypes(strings, parameterTypes);
 
-            return x;
+                    return new DataModel
+                    {
+                        Index = d.Index,
+                        Name = d.Name,
+                        Data = converted
+                    };
+                })
+                .OrderBy(m => m.Index)
+                .ToList();
         }
 
         public static string GetName(MethodInfo methodUnderTest)

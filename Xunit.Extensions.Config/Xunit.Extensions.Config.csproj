@@ -55,18 +55,23 @@
   <ItemGroup>
     <Compile Include="ConfigDataAttribute.cs" />
     <Compile Include="ConfigOrInlineDataAttribute.cs" />
+    <Compile Include="ConfigOrMemberDataAttribute.cs" />
     <Compile Include="ConfigOrPropertyDataAttribute.cs" />
+    <Compile Include="Extensions\DataAttributeExtensions.cs" />
     <Compile Include="Helpers\ConfigTestDataHelpers.cs" />
     <Compile Include="Configuration\TestCollection.cs" />
     <Compile Include="Configuration\TestDataCollection.cs" />
     <Compile Include="Configuration\TestDataElement.cs" />
     <Compile Include="Configuration\TestDataSection.cs" />
     <Compile Include="Configuration\TestElement.cs" />
+    <Compile Include="IConfigDataAttribute.cs" />
+    <Compile Include="Models\DataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

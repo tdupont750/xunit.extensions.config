@@ -19,12 +19,12 @@ namespace Xunit.Extensions
             };
 
             var data = ConfigTestDataHelpers
-                .GetDataFromConfig("Demo", types)
+                .GetDataModels("Demo", types)
                 .ToList();
 
             Assert.Equal(2, data.Count);
-            Assert.Equal(data[0], new object[] { "Hello", 123, true, TestEnum.World });
-            Assert.Equal(data[1], new object[] { "Goodnight", 456, false, TestEnum.Moon });
+            Assert.Equal(data[0].Data, new object[] { "Hello", 123, true, TestEnum.World });
+            Assert.Equal(data[1].Data, new object[] { "Goodnight", 456, false, TestEnum.Moon });
         }
 
         [Fact]

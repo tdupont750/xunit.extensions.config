@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Xunit.Extensions.Helpers;
 
 namespace Xunit.Extensions
 {
@@ -31,12 +32,12 @@ namespace Xunit.Extensions
         }
 
         [Fact]
-        public void GetDataWithConfigTwice()
+        public void GetDataWithConfigMultipleTimes()
         {
-            GetDataWithConfigTwice(false);
+            GetDataWithConfigMultipleTimes(false);
         }
 
-        private void GetDataWithConfigTwice(bool arg1)
+        private void GetDataWithConfigMultipleTimes(bool arg1)
         {
             var attribute = new ConfigOrInlineDataAttribute();
             var currentMethod = (MethodInfo)MethodBase.GetCurrentMethod();
@@ -46,6 +47,12 @@ namespace Xunit.Extensions
 
             var data2 = attribute.GetData(currentMethod);
             Assert.Equal(0, data2.Count());
+
+            var data3 = ConfigTestDataHelpers.GetData(currentMethod, false);
+            Assert.Equal(2, data3.Count());
+
+            var data4 = ConfigTestDataHelpers.GetData(currentMethod);
+            Assert.Equal(0, data4.Count());
         }
     }
 }
