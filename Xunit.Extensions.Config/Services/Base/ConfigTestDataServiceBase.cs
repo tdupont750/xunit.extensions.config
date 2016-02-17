@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Xunit.Extensions.Models;
-
-namespace Xunit.Extensions.Helpers
+namespace Xunit.Extensions.Services.Base
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using Xunit.Extensions.Models;
+
     public abstract class ConfigTestDataServiceBase : IConfigTestDataService
     {
         private static readonly Type NullableType = typeof(Nullable<>);

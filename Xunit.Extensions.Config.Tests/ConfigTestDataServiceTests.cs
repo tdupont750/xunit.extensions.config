@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Xunit.Extensions.Helpers;
 
 namespace Xunit.Extensions
 {
+    using Xunit.Extensions.Services.Implementation;
+
     public class ConfigTestDataServiceTests : ConfigTestDataService
     {
         [Fact]

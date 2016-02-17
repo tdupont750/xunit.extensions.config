@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using Xunit.Extensions.Configuration;
-using Xunit.Extensions.Models;
-
-namespace Xunit.Extensions.Helpers
+namespace Xunit.Extensions.Services.Implementation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Linq;
+
+    using Xunit.Extensions.Configuration;
+    using Xunit.Extensions.Models;
+    using Xunit.Extensions.Services.Base;
+
     public class ConfigTestDataService : ConfigTestDataServiceBase
     {
         public const string SectionName = "testData";

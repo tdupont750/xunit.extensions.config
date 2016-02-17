@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Extensions.Models;
 
 namespace Xunit.Extensions.Helpers
 {
+    using Xunit.Extensions.Services;
+    using Xunit.Extensions.Services.Implementation;
+
     public static class ConfigTestDataHelpers
     {
         private static readonly object ServiceLock = new object();
