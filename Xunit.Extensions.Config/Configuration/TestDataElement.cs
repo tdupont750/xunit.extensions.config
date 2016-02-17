@@ -113,7 +113,7 @@ namespace Xunit.Extensions.Configuration
             set { this[P9Name] = value; }
         }
 
-        public IList<string> GetParams()
+        public List<string> GetParams()
         {
             var results = new List<string>();
 

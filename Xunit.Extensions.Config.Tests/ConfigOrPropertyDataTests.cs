@@ -4,20 +4,11 @@ namespace Xunit.Extensions
 {
     public class ConfigOrPropertyDataTests
     {
-        public static IEnumerable<object[]> Prop
+        public static IEnumerable<object[]> Prop => new []
         {
-            get
-            {
-                return new []
-                {
-                    new object[]
-                    {
-                        1
-                    }
-                };
-            }
-        }
-            
+            new object[] { 1 }
+        };
+
         [Theory]
         [ConfigOrPropertyData("Prop")]
         public void GetDataWithoutConfig(int i)

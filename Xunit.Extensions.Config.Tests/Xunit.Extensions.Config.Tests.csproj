@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="ConfigOrInlineDataAttributeTests.cs" />
     <Compile Include="ConfigOrPropertyDataTests.cs" />
-    <Compile Include="ConfigTestDataHelpersTests.cs" />
+    <Compile Include="ConfigTestDataServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEnum.cs" />
   </ItemGroup>

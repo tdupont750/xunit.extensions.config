@@ -12,9 +12,7 @@ namespace Xunit.Extensions
         {
             var configDataAttribute = attribute as IConfigDataAttribute;
             if (configDataAttribute != null)
-            {
                 return configDataAttribute.GetDataModels(methodUnderTest);
-            }
 
             var data = attribute.GetData(methodUnderTest);
             return data.ToDataModels();
@@ -22,14 +20,12 @@ namespace Xunit.Extensions
 
         public static IEnumerable<DataModel> ToDataModels(this IEnumerable<object[]> data)
         {
-            return data == null
-                ? null
-                : data.Select((d, i) => new DataModel
-                {
-                    Index = i,
-                    Name = string.Empty,
-                    Data = d
-                });
+            return data?.Select((d, i) => new DataModel
+            {
+                Index = i,
+                Name = string.Empty,
+                Data = d
+            });
         }
     }
 }

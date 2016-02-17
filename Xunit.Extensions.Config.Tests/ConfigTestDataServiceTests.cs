@@ -5,7 +5,7 @@ using Xunit.Extensions.Helpers;
 
 namespace Xunit.Extensions
 {
-    public class ConfigTestDataHelpersTests
+    public class ConfigTestDataServiceTests : ConfigTestDataService
     {
         [Fact]
         public void GetDataFromConfig()
@@ -18,9 +18,7 @@ namespace Xunit.Extensions
                 typeof (TestEnum)
             };
 
-            var data = ConfigTestDataHelpers
-                .GetDataModels("Demo", types)
-                .ToList();
+            var data = GetDataModels("Demo", types).ToList();
 
             Assert.Equal(2, data.Count);
             Assert.Equal(data[0].Data, new object[] { "Hello", 123, true, TestEnum.World });
@@ -31,9 +29,9 @@ namespace Xunit.Extensions
         public void GetName()
         {
             var currentMethod = (MethodInfo)MethodBase.GetCurrentMethod();
-            var name = ConfigTestDataHelpers.GetName(currentMethod);
+            var name = GetName(currentMethod);
 
-            Assert.Equal("Xunit.Extensions.ConfigTestDataHelpersTests.GetName", name);
+            Assert.Equal("Xunit.Extensions.ConfigTestDataServiceTests.GetName", name);
         }
 
         [Theory]
@@ -47,10 +45,35 @@ namespace Xunit.Extensions
         {
             var values = new[] { value };
             var types = new[] { type };
-            var actualResults = ConfigTestDataHelpers.ConvertTypes(values, types);
+            var actualResults = ConvertTypes(values, types);
             var expectedResults = new[] { result };
 
             Assert.Equal(expectedResults, actualResults);
+        }
+
+        [Fact]
+        public void GetDataWithConfigMultipleTimes()
+        {
+            GetDataWithConfigMultipleTimes(true);
+        }
+
+        private void GetDataWithConfigMultipleTimes(bool arg1)
+        {
+            Assert.True(arg1);
+
+            var currentMethod = (MethodInfo)MethodBase.GetCurrentMethod();
+
+            var data1 = GetData(currentMethod, true);
+            Assert.Equal(2, data1.Count());
+
+            var data2 = GetData(currentMethod, true);
+            Assert.Equal(0, data2.Count());
+
+            var data3 = GetData(currentMethod, false);
+            Assert.Equal(2, data3.Count());
+
+            var data4 = GetData(currentMethod, true);
+            Assert.Equal(0, data4.Count());
         }
     }
 }
