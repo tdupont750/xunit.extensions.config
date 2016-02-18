@@ -1,14 +1,22 @@
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
-using Xunit.Extensions.Helpers;
+using Xunit.Extensions.Configuration;
+using Xunit.Extensions.Models;
+using Xunit.Extensions.Services.Implementation;
 
-namespace Xunit.Extensions
+namespace Xunit.Extensions.Services
 {
-    using Xunit.Extensions.Services.Implementation;
-
-    public class ConfigTestDataServiceTests : ConfigTestDataService
+    public class SectionConfigTestDataServiceTests : SectionConfigTestDataService
     {
+        private static readonly TestDataSection Section = (TestDataSection) ConfigurationManager.GetSection(SectionName);
+
+        public SectionConfigTestDataServiceTests() 
+            : base(Section)
+        {
+        }
+
         [Fact]
         public void GetDataFromConfig()
         {
@@ -33,7 +41,7 @@ namespace Xunit.Extensions
             var currentMethod = (MethodInfo)MethodBase.GetCurrentMethod();
             var name = GetName(currentMethod);
 
-            Assert.Equal("Xunit.Extensions.ConfigTestDataServiceTests.GetName", name);
+            Assert.Equal("Xunit.Extensions.Services.SectionConfigTestDataServiceTests.GetName", name);
         }
 
         [Theory]

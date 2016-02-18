@@ -1,4 +1,4 @@
-﻿namespace Xunit.Extensions
+﻿namespace Xunit.Extensions.Models
 {
     public enum TestEnum
     {

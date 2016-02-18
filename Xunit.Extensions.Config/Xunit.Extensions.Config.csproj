@@ -64,7 +64,9 @@
     <Compile Include="Configuration\TestDataElement.cs" />
     <Compile Include="Configuration\TestDataSection.cs" />
     <Compile Include="Configuration\TestElement.cs" />
-    <Compile Include="Services\Implementation\ConfigTestDataService.cs" />
+    <Compile Include="Services\Implementation\AppConfigTestDataService.cs" />
+    <Compile Include="Services\Implementation\EmptyConfigTestDataService.cs" />
+    <Compile Include="Services\Implementation\SectionConfigTestDataService.cs" />
     <Compile Include="Services\Base\ConfigTestDataServiceBase.cs" />
     <Compile Include="Services\IConfigTestDataService.cs" />
     <Compile Include="IConfigDataAttribute.cs" />

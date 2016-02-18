@@ -9,15 +9,29 @@ namespace Xunit.Extensions.Services.Implementation
     using Xunit.Extensions.Models;
     using Xunit.Extensions.Services.Base;
 
-    public class ConfigTestDataService : ConfigTestDataServiceBase
+    public class SectionConfigTestDataService : ConfigTestDataServiceBase
     {
-        public const string SectionName = "testData";
+        protected const string SectionName = "testData";
 
         private readonly TestDataSection _section;
 
-        public ConfigTestDataService()
+        public SectionConfigTestDataService(TestDataSection section)
         {
-            _section = (TestDataSection)ConfigurationManager.GetSection(SectionName);
+            _section = section;
+        }
+
+        public static bool TryCreate(out IConfigTestDataService service)
+        {
+            var section = ConfigurationManager.GetSection(SectionName) as TestDataSection;
+
+            if (section == null)
+            {
+                service = null;
+                return false;
+            }
+
+            service = new SectionConfigTestDataService(section);
+            return true;
         }
 
         protected override IList<DataModel> GetDataModels(string name, IList<Type> parameterTypes)
