@@ -58,6 +58,7 @@
     <Compile Include="ConfigOrMemberDataAttribute.cs" />
     <Compile Include="ConfigOrPropertyDataAttribute.cs" />
     <Compile Include="Extensions\DataAttributeExtensions.cs" />
+    <Compile Include="Helpers\AssemblyHelpers.cs" />
     <Compile Include="Helpers\ConfigTestDataHelpers.cs" />
     <Compile Include="Configuration\TestCollection.cs" />
     <Compile Include="Configuration\TestDataCollection.cs" />

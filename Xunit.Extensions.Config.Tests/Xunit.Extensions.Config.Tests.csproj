@@ -50,6 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyHelperTests.cs" />
     <Compile Include="Services\AppConfigTestDataServiceTests.cs" />
     <Compile Include="ConfigOrInlineDataAttributeTests.cs" />
     <Compile Include="ConfigOrPropertyDataTests.cs" />
