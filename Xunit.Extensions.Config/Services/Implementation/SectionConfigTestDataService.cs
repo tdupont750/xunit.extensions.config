@@ -42,6 +42,17 @@ namespace Xunit.Extensions.Services.Implementation
                 .Cast<TestElement>()
                 .FirstOrDefault(t => t.Name == name);
 
+            if (test == null 
+                && !string.IsNullOrWhiteSpace(_section.DefaultNamespace)
+                && name.StartsWith(_section.DefaultNamespace + "."))
+            {
+                var defaultlessName = name.Substring(_section.DefaultNamespace.Length + 1);
+
+                test = _section.Tests
+                    .Cast<TestElement>()
+                    .FirstOrDefault(t => t.Name == defaultlessName);
+            }
+
             return test?.Data
                 .Cast<TestDataElement>()
                 .Select(d =>

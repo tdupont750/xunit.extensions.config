@@ -11,5 +11,14 @@ namespace Xunit.Extensions.Configuration
         {
             get { return (TestCollection)base[TestsName]; }
         }
+
+        private const string DefaultNamespaceName = "defaultNamespace";
+
+        [ConfigurationProperty(DefaultNamespaceName, IsKey = false, IsRequired = false)]
+        public string DefaultNamespace
+        {
+            get { return (string)this[DefaultNamespaceName]; }
+            set { this[DefaultNamespaceName] = value; }
+        }
     }
 }

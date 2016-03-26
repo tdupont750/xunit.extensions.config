@@ -12,6 +12,8 @@ namespace Xunit.Extensions.Services
         {
             { "Hello", "World" },
 
+            { "TestData.DefaultNamespace", "Xunit.Extensions.Services" },
+
             { "TestData[0].Name", "A" },
             { "TestData[0].Data[0].Name", "A0" },
             { "TestData[0].Data[0][0]", "A00" },
@@ -29,7 +31,7 @@ namespace Xunit.Extensions.Services
             { "TestData[2].Data[1][B]", "C1B" },
             { "TestData[2].Data[1][C]", "C1C" },
 
-            { "TestData[3].Name", "Xunit.Extensions.Services.AppConfigTestDataServiceTests.GetNamedFromPairs" },
+            { "TestData[3].Name", "AppConfigTestDataServiceTests.GetNamedFromPairs" },
             { "TestData[3].Data[0][i]", "42" },
             { "TestData[3].Data[0][am]", "true" },
             { "TestData[3].Data[0][testing]", "Hello" },

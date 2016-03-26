@@ -12,6 +12,8 @@ namespace Xunit.Extensions.Services.Implementation
 {
     public class AppConfigTestDataService : ConfigTestDataServiceBase
     {
+        private const string DefaultNamespaceKey = "TestData.DefaultNamespace";
+
         private static readonly Regex PrefixRegex = new Regex(@"^TestData\[(\d+)\]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex TestNameRegex = new Regex(@"^TestData\[(\d+)\]\.Name$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -24,10 +26,15 @@ namespace Xunit.Extensions.Services.Implementation
 
         private static readonly Regex NamedRegex = new Regex(@"\[([a-z0-9]+)\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        private readonly string _defaultNamespace;
+
         private readonly Lazy<IDictionary<string, IList<DataModel<string>>>> _tests;
 
         public AppConfigTestDataService(NameValueCollection collection)
         {
+            if (collection.AllKeys.Contains(DefaultNamespaceKey))
+                _defaultNamespace = collection[DefaultNamespaceKey];
+
             _tests = new Lazy<IDictionary<string, IList<DataModel<string>>>>(() => ParseTests(collection));
         }
 
@@ -131,7 +138,13 @@ namespace Xunit.Extensions.Services.Implementation
         {
             if (!_tests.Value.ContainsKey(name))
             {
-                return null;
+                if (string.IsNullOrWhiteSpace(_defaultNamespace) || !name.StartsWith(_defaultNamespace + "."))
+                    return null;
+                
+                name = name.Substring(_defaultNamespace.Length + 1);
+
+                if (!_tests.Value.ContainsKey(name))
+                    return null;
             }
 
             return _tests.Value[name]
