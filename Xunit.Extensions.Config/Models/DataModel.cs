@@ -1,4 +1,6 @@
-﻿namespace Xunit.Extensions.Models
+﻿using System.Collections.Generic;
+
+namespace Xunit.Extensions.Models
 {
     public class DataModel : DataModel<object>
     {
@@ -10,6 +12,8 @@
 
         public string Name { get; set; }
 
-        public T[] Data { get; set; }
+        public T[] IndexedData { get; set; }
+
+        public IDictionary<string, T> NamedData { get; set; }
     }
 }

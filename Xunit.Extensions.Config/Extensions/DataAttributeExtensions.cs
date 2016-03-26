@@ -24,7 +24,7 @@ namespace Xunit.Extensions
             {
                 Index = i,
                 Name = string.Empty,
-                Data = d
+                IndexedData = d
             });
         }
     }

@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Xunit.Extensions.Services.Implementation
 {
     using System;
@@ -34,7 +36,7 @@ namespace Xunit.Extensions.Services.Implementation
             return true;
         }
 
-        protected override IList<DataModel> GetDataModels(string name, IList<Type> parameterTypes)
+        protected override IList<DataModel> GetDataModels(string name, IList<ParameterInfo> parameters)
         {
             var test = _section.Tests
                 .Cast<TestElement>()
@@ -44,14 +46,15 @@ namespace Xunit.Extensions.Services.Implementation
                 .Cast<TestDataElement>()
                 .Select(d =>
                 {
-                    var strings = d.GetParams();
-                    var converted = ConvertTypes(strings, parameterTypes);
+                    var strings = d.GetData(parameters);
+                    var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
+                    var converted = ConvertTypes(strings, paramTypes);
 
                     return new DataModel
                     {
                         Index = d.Index,
                         Name = d.Name,
-                        Data = converted
+                        IndexedData = converted
                     };
                 })
                 .OrderBy(m => m.Index)

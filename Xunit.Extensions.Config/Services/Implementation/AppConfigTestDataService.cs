@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Xunit.Extensions.Models;
 using Xunit.Extensions.Services.Base;
@@ -15,11 +16,13 @@ namespace Xunit.Extensions.Services.Implementation
 
         private static readonly Regex TestNameRegex = new Regex(@"^TestData\[(\d+)\]\.Name$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex DataRegex = new Regex(@"\.Data\[(\d+)\]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex DataRegex = new Regex(@"\.Data\[([a-z0-9]+)\]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex DataNameRegex = new Regex(@"\.Name$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex IndexRegex = new Regex(@"\[(\d+)\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex IndexedRegex = new Regex(@"\[(\d+)\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex NamedRegex = new Regex(@"\[([a-z0-9]+)\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private readonly Lazy<IDictionary<string, IList<DataModel<string>>>> _tests;
 
@@ -83,34 +86,48 @@ namespace Xunit.Extensions.Services.Implementation
                                 ? null
                                 : collection[nameKey];
 
-                            var data = dataGroup
-                                .Select(pair => new
+                            var dataMatches = dataGroup
+                                .Select(pair => new 
                                 {
                                     pair.Key,
-                                    Match = IndexRegex.Match(pair.Key)
+                                    IndexedMatch = IndexedRegex.Match(pair.Key),
+                                    NamedMatch = NamedRegex.Match(pair.Key)
                                 })
-                                .Where(pair => pair.Match.Success)
+                                .ToArray();
+
+                            var indexData = dataMatches
+                                .Where(pair => pair.IndexedMatch.Success)
                                 .Select(pair => new
                                 {
                                     pair.Key,
-                                    Index = int.Parse(pair.Match.Groups[1].Value)
+                                    Index = int.Parse(pair.IndexedMatch.Groups[1].Value)
                                 })
                                 .OrderBy(pair => pair.Index)
                                 .Select(pair => collection[pair.Key])
                                 .ToArray();
 
-                            return new DataModel<string>
+                            var namedData = dataMatches
+                                .Where(pair => !pair.IndexedMatch.Success && pair.NamedMatch.Success)
+                                .ToDictionary(key => key.NamedMatch.Groups[1].Value, value => collection[value.Key], StringComparer.InvariantCultureIgnoreCase);
+
+                            if (indexData.Length != 0 ^ namedData.Count != 0)
                             {
-                                Index = index,
-                                Name = name,
-                                Data = data
-                            };
+                                return new DataModel<string>
+                                {
+                                    Index = index,
+                                    Name = name,
+                                    IndexedData = indexData,
+                                    NamedData = namedData
+                                };
+                            }
+
+                            throw new InvalidOperationException("Unique indexed or named data not detected for " + name);
                         })
                         .ToList();
                 });
         }
 
-        protected override IList<DataModel> GetDataModels(string name, IList<Type> parameterTypes)
+        protected override IList<DataModel> GetDataModels(string name, IList<ParameterInfo> parameters)
         {
             if (!_tests.Value.ContainsKey(name))
             {
@@ -120,13 +137,29 @@ namespace Xunit.Extensions.Services.Implementation
             return _tests.Value[name]
                 .Select(t =>
                 {
-                    var converted = ConvertTypes(t.Data, parameterTypes);
+                    object[] converted;
+
+                    var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
+
+                    if (t.IndexedData.Length > 0)
+                    {
+                        converted = ConvertTypes(t.IndexedData, paramTypes);
+                    }
+                    else if (t.NamedData.Count > 0)
+                    {
+                        var values = parameters.Select(p => t.NamedData[p.Name]).ToArray();
+                        converted = ConvertTypes(values, paramTypes);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("No data found for " + name);
+                    }
 
                     return new DataModel
                     {
                         Index = t.Index,
                         Name = t.Name,
-                        Data = converted
+                        IndexedData = converted
                     };
                 })
                 .ToList();

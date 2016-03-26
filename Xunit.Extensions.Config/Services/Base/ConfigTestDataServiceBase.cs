@@ -18,7 +18,7 @@ namespace Xunit.Extensions.Services.Base
         {
             var models = GetDataModels(methodUnderTest, useCache);
 
-            return models?.Select(m => m.Data);
+            return models?.Select(m => m.IndexedData);
         }
 
         public IEnumerable<DataModel> GetDataModels(MethodInfo methodUnderTest, bool useCache)
@@ -31,8 +31,7 @@ namespace Xunit.Extensions.Services.Base
             {
                 var parameterTypes = methodUnderTest
                     .GetParameters()
-                    .Select(p => p.ParameterType)
-                    .ToList();
+                    .ToArray();
 
                 data = GetDataModels(name, parameterTypes);
                 return data != null;
@@ -58,7 +57,7 @@ namespace Xunit.Extensions.Services.Base
             return $"{methodUnderTest.DeclaringType.Namespace}.{methodUnderTest.DeclaringType.Name}.{methodUnderTest.Name}";
         }
 
-        protected abstract IList<DataModel> GetDataModels(string name, IList<Type> parameterTypes);
+        protected abstract IList<DataModel> GetDataModels(string name, IList<ParameterInfo> parameterTypes);
 
         protected virtual object[] ConvertTypes(IList<string> values, IList<Type> types)
         {
