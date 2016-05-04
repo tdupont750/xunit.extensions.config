@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Xunit.Extensions.Helpers;
 using Xunit.Extensions.Models;
@@ -12,12 +13,12 @@ namespace Xunit.Extensions
     {
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
-            return ConfigTestDataHelpers.GetData(testMethod);
+            return ConfigTestDataHelpers.GetData(testMethod) ?? Enumerable.Empty<object[]>();
         }
 
         public IEnumerable<DataModel> GetDataModels(MethodInfo testMethod)
         {
-            return ConfigTestDataHelpers.GetDataModels(testMethod);
+            return ConfigTestDataHelpers.GetDataModels(testMethod) ?? Enumerable.Empty<DataModel>();
         }
     }
 }
