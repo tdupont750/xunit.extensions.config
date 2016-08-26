@@ -13,35 +13,35 @@ namespace Xunit.Extensions.Helpers
     {
         private const string InitKey = "TestData.ServiceFactory";
 
-        private static readonly object InitLock = new object();
-
         private static readonly object ServiceLock = new object();
-
-        private static volatile bool _isInitialized;
-
+        
         private static IConfigTestDataService _service;
 
         public static IConfigTestDataService Service
         {
             get
             {
-                TryInit();
-
-                lock (ServiceLock)
-                {
-                    return _service ?? (_service = CreateService());
-                }
-            }
-
-            set
-            {
                 lock (ServiceLock)
                 {
                     if (_service != null)
-                        throw new InvalidOperationException("IConfigTestDataService already set");
-
-                    _service = value;
+                        return _service;
+                    
+                    return _service = CreateService();
                 }
+            }
+        }
+
+        public static void SetService(IConfigTestDataService service)
+        {
+            if (service == null)
+                throw new ArgumentNullException(nameof(service));
+
+            lock (ServiceLock)
+            {
+                if (_service != null)
+                    throw new InvalidOperationException("IConfigTestDataService already set");
+
+                _service = service;
             }
         }
 
@@ -55,34 +55,21 @@ namespace Xunit.Extensions.Helpers
             return Service.GetDataModels(methodUnderTest);
         }
 
-        private static void TryInit()
+        private static IConfigTestDataService CreateService()
         {
-            if (_isInitialized)
-                return;
+            IConfigTestDataService service;
 
-            lock (InitLock)
+            if (ConfigurationManager.AppSettings.AllKeys.Contains(InitKey))
             {
-                if (_isInitialized)
-                    return;
-
-                _isInitialized = true;
-
-                if (!ConfigurationManager.AppSettings.AllKeys.Contains(InitKey))
-                    return;
-
                 var value = ConfigurationManager.AppSettings[InitKey];
-                var service = AssemblyHelpers.InvokeStaticMethod(value) as IConfigTestDataService;
+
+                service = AssemblyHelpers.InvokeStaticMethod(value) as IConfigTestDataService;
 
                 if (service == null)
                     throw new ConfigurationErrorsException(InitKey + " did not return an IConfigTestDataService");
 
-                Service = service;
+                return service;
             }
-        }
-
-        private static IConfigTestDataService CreateService()
-        {
-            IConfigTestDataService service;
 
             if (SectionConfigTestDataService.TryCreate(out service))
                 return service;
